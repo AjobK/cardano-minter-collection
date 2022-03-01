@@ -33,7 +33,7 @@ const metadata = {
     }
 }
 
-const txOut_value = [ assets[0]].reduce((result, asset) => {
+const txOut_value = [ assets[1] ].reduce((result, asset) => {
     const ASSET_ID = POLICY_ID + "." + convert_string_to_hex(asset.id)
     result[ASSET_ID] = 1
     return result
@@ -42,10 +42,13 @@ const txOut_value = [ assets[0]].reduce((result, asset) => {
     ...wallet.balance().value
 })
 
+console.log('Gimme value')
+console.log(txOut_value)
+
 const mapped_actions = assets.map(asset => ({ type: "mint", quantity: 1, asset: POLICY_ID + "." + convert_string_to_hex(asset.id) }))
 
 const mint_actions = {
-    action: [ mapped_actions[0] ],
+    action: [ mapped_actions[1] ],
     script: [ mintScript ]
 }
 
@@ -57,13 +60,18 @@ const tx = {
     txOut: [
         {
             address: wallet.paymentAddr,
-            value: txOut_value
+            value: {
+                ...txOut_value
+            }
         }
     ],
     mint: mint_actions,
     metadata,
     witnessCount: 2
 }
+
+console.log('This is tx out')
+console.log(tx.txOut)
 
 // Remove the undefined from the transaction if it extists
 if(Object.keys(tx.txOut[0].value).includes("undefined")){

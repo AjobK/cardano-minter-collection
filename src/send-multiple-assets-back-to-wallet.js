@@ -2,7 +2,7 @@ const cardano = require("./cardano")
 const assets = require("./assets.json")
 const getPolicyId = require('./get-policy-id')
 
-const sender = cardano.wallet("ADAPI")
+const sender = cardano.wallet("Elowallet2")
 
 const { convert_string_to_hex } = require('./helper.js')
 

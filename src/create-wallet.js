@@ -11,4 +11,4 @@ const createWallet = (account) => {
   return cardano.wallet(account);
 };
 
-createWallet("ADAPI")
+createWallet("Elowallet2")

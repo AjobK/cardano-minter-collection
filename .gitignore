@@ -4,3 +4,4 @@ priv_backup
 node_modules
 mainnet-shelley-genesis.json
 .env
+package-lock.json

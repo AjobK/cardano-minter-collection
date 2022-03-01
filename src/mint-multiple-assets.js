@@ -6,6 +6,8 @@ const wallet = cardano.wallet("ADAPI")
 
 const { policyId: POLICY_ID, mintScript } = getPolicyId()
 
+const { convert_string_to_hex } = require('./helper.js')
+
 const metadata_assets = assets.reduce((result, asset) => {
 
     const ASSET_ID = asset.id // PIADA0
@@ -31,9 +33,8 @@ const metadata = {
     }
 }
 
-const txOut_value = assets.reduce((result, asset) => {
-
-    const ASSET_ID = POLICY_ID + "." + asset.id
+const txOut_value = [ assets[0]].reduce((result, asset) => {
+    const ASSET_ID = POLICY_ID + "." + convert_string_to_hex(asset.id)
     result[ASSET_ID] = 1
     return result
 
@@ -41,7 +42,15 @@ const txOut_value = assets.reduce((result, asset) => {
     ...wallet.balance().value
 })
 
-const mint_actions = assets.map(asset => ({ action: "mint", quantity: 1, asset: POLICY_ID + "." + asset.id, script: mintScript }))
+const mapped_actions = assets.map(asset => ({ type: "mint", quantity: 1, asset: POLICY_ID + "." + convert_string_to_hex(asset.id) }))
+
+const mint_actions = {
+    action: [ mapped_actions[0] ],
+    script: [ mintScript ]
+}
+
+console.log('Mint actionsss')
+console.log(mint_actions)
 
 const tx = {
     txIn: wallet.balance().utxo,
@@ -65,6 +74,9 @@ if(Object.keys(tx.txOut[0].value).includes("undefined")){
 const buildTransaction = (tx) => {
 
     const raw = cardano.transactionBuildRaw(tx)
+    console.log('After build raw')
+    console.log(raw)
+
     const fee = cardano.transactionCalculateMinFee({
         ...tx,
         txBody: raw
@@ -74,6 +86,9 @@ const buildTransaction = (tx) => {
 
     return cardano.transactionBuildRaw({ ...tx, fee })
 }
+
+console.log('TXX')
+console.log(tx)
 
 const raw = buildTransaction(tx)
 
